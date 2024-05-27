@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { IoIosAdd } from "react-icons/io";
 
 export default function Home() {
@@ -22,11 +23,13 @@ export default function Home() {
           </ul>
         </details>
       </aside>
-      <div className="mt-10 bg-slate-300 h-fit p-2 rounded">
-        <h2 className="flex gap-2 items-center">
-          Adicionar task <span><IoIosAdd size={25}/></span>
-        </h2>
-      </div>
+      <button className="mt-10 bg-slate-300 hover:bg-slate-400 h-fit p-2 rounded">
+        <Link href="/createTask">
+          <h2 className="flex gap-2 items-center">
+            Adicionar task <span><IoIosAdd size={25}/></span>
+          </h2>
+        </Link>
+      </button>
     </main>
   );
 }
