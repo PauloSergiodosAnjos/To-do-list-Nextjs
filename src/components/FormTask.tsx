@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form"
 import Task from "../modal/Task"
 import Link from "next/link"
+import Header from "../components/Header"
 
 interface ITask {
     id: number,
@@ -29,6 +30,7 @@ export default function FormTask() {
     
     return(
         <main className="bg-slate-200 h-screen p-2">
+            <Header/>
             <form className="flex flex-col items-center gap-3" onSubmit={handleSubmit(onSubmit)}>
                 <label htmlFor="title">Titulo</label>
                 <input className="bg-slate-300 rounded p-1 focus:outline-none focus:ring-0 focus:border-transparent" type="text" {...register("title", {required: "Title is required"})} />
