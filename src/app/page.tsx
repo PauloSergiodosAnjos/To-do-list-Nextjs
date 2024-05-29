@@ -2,22 +2,85 @@
 
 import Link from "next/link";
 import { IoIosAdd } from "react-icons/io";
-import { createClient } from "@supabase/supabase-js";
 import { useContext, useEffect, useState } from "react";
 import TaskContext from "@/context/task";
 
-const supabase = createClient("https://nwzgcygpeaprnylgxgoe.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53emdjeWdwZWFwcm55bGd4Z29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTQyMzI3MjEsImV4cCI6MjAyOTgwODcyMX0.c0x8l1mWxXHe5KOimNd-ls6juLTkz715yTWuLG7kq0w")
-
 interface ITask {
-  id: number,
   category: string,
   description: string,
   title: string
 }
 
+interface ICategory {
+  id: number,
+  title: string,
+  selected: boolean
+}
+
+const categoryData: ICategory[] = [
+  {
+    id: 1,
+    title: "Privado",
+    selected: false
+  },
+  {
+    id: 2,
+    title: "Trabalho",
+    selected: false
+  },
+  {
+    id: 3,
+    title: "Lazer",
+    selected: false
+  },
+  {
+    id: 4,
+    title: "Esporte",
+    selected: false
+  },
+  {
+    id: 5,
+    title: "Outros",
+    selected: false
+  },
+  {
+    id: 6,
+    title: "Todos",
+    selected: true
+  }
+]
+
 export default function Home() {
 
   const { tasks } = useContext(TaskContext)
+  const [category, setCategory] = useState<ICategory[]>(categoryData)
+  const [filteredTask, setFilteredTask] = useState<ITask[]>([])
+
+  useEffect(()=>{
+    setFilteredTask(tasks ?? [])
+  }, [tasks])
+
+  const handleSelectCategory = (id: number)=> {
+    const updateOptions: ICategory[] = categoryData.map((category)=>{
+      if (category.id === id) {
+        return { ...category, selected: true }
+      }
+      return { ...category, selected: false }
+    })
+    setCategory(updateOptions)
+    filterCategory(id)
+  }
+
+  const filterCategory = (id: number)=> {
+    const selectedOption = categoryData.find(category => category.id === id)
+
+    if (selectedOption && selectedOption.title === "Todos") {
+      setFilteredTask(tasks ?? [])
+    } else {
+      const filter = tasks?.filter(task => task.category === selectedOption?.title)
+      setFilteredTask(filter ?? [])
+    }
+  }
 
   return (
     <div className="flex">
@@ -26,17 +89,16 @@ export default function Home() {
           <ul className="flex text-slate-50 flex-col gap-3 mb-10">
             <li>Home</li>
             <li>Criar</li>
-            <li>Filtrar</li>
           </ul>
           <div className="bg-slate-600 h-px"></div>
           <details className="mt-10">
             <summary className="mb-5 text-slate-50">Categorias</summary>
             <ul className="flex text-slate-50 flex-col justify-items-center gap-3">
-              <li>Privado</li>
-              <li>Trabalho</li>
-              <li>Lazer</li>
-              <li>Esporte</li>
-              <li>Outros</li>
+            {category.map((category)=>{
+              return(
+                <li className={`p-3 ${category.selected ? "bg-slate-500" : "bg-transparent"} rounded cursor-pointer`} onClick={()=> handleSelectCategory(category.id)} key={category.id}>{category.title}</li>
+              )
+            })}
             </ul>
           </details>
         </aside>
@@ -49,7 +111,7 @@ export default function Home() {
             </Link>
           </button>
           <div className="flex flex-wrap pr-2 pb-4 gap-10">
-              {tasks && tasks.map((task, i)=>{
+              {filteredTask && filteredTask.map((task, i)=>{
                 return(
                 <ul key={i} className="bg-slate-400 w-fit p-3 rounded">
                   <li className="text-center text-lg font-bold mb-5">{task.title}</li>
