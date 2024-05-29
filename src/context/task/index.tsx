@@ -18,6 +18,9 @@ interface IPropsTaskContext {
     setState: React.Dispatch<React.SetStateAction<ITasktype>>,
     tasks: ITasktype[] | null,
     createTask: (task: ITasktype) => Promise<void>
+    deleteTask: (id: number) => Promise<void>,
+    getTasks: ()=> Promise<void>
+    editTask: (id: number, task: ITasktype)=> Promise<void>
 }
 
 //valor default do contexto
@@ -29,7 +32,10 @@ const DEFAUL_VALUE = {
     },
     setState: () => {},
     tasks: [],
-    createTask: async ()=> {}
+    createTask: async ()=> {},
+    deleteTask: async ()=> {},
+    getTasks: async ()=> {},
+    editTask: async ()=> {}
 }
 
 //criando nosso contexto, tipando ele com os dados (props) que queremos ter no nosso context
@@ -51,14 +57,36 @@ const TaskContextProvider = ({ children }: IProps)=> {
     }, [])
 
     const getTasks = async ()=>{
-    const { data } = await supabase.from("Tasks").select()
-    console.log(data);
-    
-    setTasks(data)
+        try {
+            const { data } = await supabase.from("Tasks").select()
+            console.log(data);
+            
+            setTasks(data)
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     const createTask = async (user: ITasktype)=>{
-        await supabase.from("Tasks").insert({category: user.category, description: user.description, title: user.title})
+        try {
+            await supabase.from("Tasks").insert({category: user.category, description: user.description, title: user.title})
+            await getTasks()
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const deleteTask = async (id: number) => {
+        try {
+            await supabase.from("Tasks").delete().eq("id", id)
+            await getTasks()
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const editTask = async (id: number, task: ITasktype) => {
+        await supabase.from("Tasks").update({category: task.category, description: task.description, title: task.title}).eq("id", String(id))
         await getTasks()
     }
 
@@ -67,7 +95,10 @@ const TaskContextProvider = ({ children }: IProps)=> {
             state,
             setState,
             tasks,
-            createTask
+            createTask,
+            deleteTask,
+            getTasks,
+            editTask
         }}>
             { children }
         </TaskContext.Provider>

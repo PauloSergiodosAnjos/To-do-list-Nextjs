@@ -6,12 +6,6 @@ import Header from "../components/Header"
 import { useContext } from "react"
 import TaskContext from "@/context/task"
 
-interface ITask {
-    title: string,
-    description: string,
-    category: string
-}
-
 type Inputs = {
     title: string,
     description: string,

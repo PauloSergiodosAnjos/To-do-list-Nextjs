@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { IoIosAdd } from "react-icons/io";
+import { PiTrashSimple } from "react-icons/pi";
+import { CiEdit } from "react-icons/ci";
+import { IoCheckmarkOutline } from "react-icons/io5";
 import { useContext, useEffect, useState } from "react";
 import TaskContext from "@/context/task";
 
@@ -52,7 +55,7 @@ const categoryData: ICategory[] = [
 
 export default function Home() {
 
-  const { tasks } = useContext(TaskContext)
+  const { tasks, deleteTask } = useContext(TaskContext)
   const [category, setCategory] = useState<ICategory[]>(categoryData)
   const [filteredTask, setFilteredTask] = useState<ITask[]>([])
 
@@ -116,7 +119,12 @@ export default function Home() {
                 <ul key={i} className="bg-slate-400 w-fit p-3 rounded">
                   <li className="text-center text-lg font-bold mb-5">{task.title}</li>
                   <li>{task.description}</li>
-                  <li>{task.category}</li>
+                  <li className="mb-2">{task.category}</li>
+                  <div className="flex items-center gap-3">
+                    <PiTrashSimple onClick={()=> deleteTask(task.id)} size={20}/>
+                    <CiEdit size={20}/>
+                    <IoCheckmarkOutline size={20}/>
+                  </div>
                 </ul>
                 )
               })}
