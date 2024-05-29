@@ -1,6 +1,6 @@
 "use client"
 
-import React, { ReactNode, createContext, useEffect, useState } from "react"
+import React, { ReactNode, createContext, use, useEffect, useState } from "react"
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient("https://nwzgcygpeaprnylgxgoe.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53emdjeWdwZWFwcm55bGd4Z29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTQyMzI3MjEsImV4cCI6MjAyOTgwODcyMX0.c0x8l1mWxXHe5KOimNd-ls6juLTkz715yTWuLG7kq0w")
@@ -12,11 +12,12 @@ interface ITasktype {
     title: string,
 }
 
-//Props do contexto
+//Props do contexto, os dados que vao poder ser acessados no context
 interface IPropsTaskContext {
     state: ITasktype,
     setState: React.Dispatch<React.SetStateAction<ITasktype>>,
-    tasks: ITasktype[] | null
+    tasks: ITasktype[] | null,
+    createTask: (task: ITasktype) => Promise<void>
 }
 
 //valor default do contexto
@@ -27,19 +28,22 @@ const DEFAUL_VALUE = {
         title: ""
     },
     setState: () => {},
-    tasks: []
+    tasks: [],
+    createTask: async ()=> {}
 }
 
-//criando nosso contexto
+//criando nosso contexto, tipando ele com os dados (props) que queremos ter no nosso context
 const TaskContext = createContext<IPropsTaskContext>(DEFAUL_VALUE)
 
+//tipo da prop children
 interface IProps {
     children: ReactNode
 }
 
 
 const TaskContextProvider = ({ children }: IProps)=> {
-    const [state, setState] = useState(DEFAUL_VALUE.state)
+    //criando os states que irao compor as props necessarias do context criado
+    const [state, setState] = useState<ITasktype>(DEFAUL_VALUE.state)
     const [tasks, setTasks] = useState<ITasktype[] | null>([])
 
     useEffect(()=>{
@@ -53,11 +57,17 @@ const TaskContextProvider = ({ children }: IProps)=> {
     setTasks(data)
     }
 
+    const createTask = async (user: ITasktype)=>{
+        await supabase.from("Tasks").insert({category: user.category, description: user.description, title: user.title})
+        await getTasks()
+    }
+
     return(
         <TaskContext.Provider value={{
             state,
             setState,
-            tasks
+            tasks,
+            createTask
         }}>
             { children }
         </TaskContext.Provider>

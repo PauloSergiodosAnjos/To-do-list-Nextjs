@@ -2,11 +2,11 @@
 
 import { useForm } from "react-hook-form"
 import Task from "../modal/Task"
-import Link from "next/link"
 import Header from "../components/Header"
+import { useContext } from "react"
+import TaskContext from "@/context/task"
 
 interface ITask {
-    id: number,
     title: string,
     description: string,
     category: string
@@ -21,10 +21,12 @@ type Inputs = {
 export default function FormTask() {
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm<Inputs>()
+    const { createTask } = useContext(TaskContext)
+
 
     const onSubmit = (data: Inputs) => {
         const task = new Task(data)
-        console.log(task);
+        createTask(task)
         reset()
     }
     

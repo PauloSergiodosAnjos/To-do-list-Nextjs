@@ -19,13 +19,9 @@ export default function Home() {
 
   const { tasks } = useContext(TaskContext)
 
- 
-
-  
-
   return (
     <div className="flex">
-        <aside className="bg-slate-800 w-72 h-screen p-3">
+        <aside className="bg-slate-800 w-72 p-3">
           <h2 className="mb-10 text-white">To do</h2>
           <ul className="flex text-slate-50 flex-col gap-3 mb-10">
             <li>Home</li>
@@ -52,7 +48,7 @@ export default function Home() {
               </h2>
             </Link>
           </button>
-          <div className="flex flex-wrap pr-2 gap-10">
+          <div className="flex flex-wrap pr-2 pb-4 gap-10">
               {tasks && tasks.map((task, i)=>{
                 return(
                 <ul key={i} className="bg-slate-400 w-fit p-3 rounded">
