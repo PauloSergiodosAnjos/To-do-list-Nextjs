@@ -9,6 +9,7 @@ import { useContext, useEffect, useState } from "react";
 import TaskContext from "@/context/task";
 
 interface ITask {
+  id: string,
   category: string,
   description: string,
   title: string
@@ -57,7 +58,7 @@ export default function Home() {
 
   const { tasks, deleteTask } = useContext(TaskContext)
   const [category, setCategory] = useState<ICategory[]>(categoryData)
-  const [filteredTask, setFilteredTask] = useState<ITask[]>([])
+  const [filteredTask, setFilteredTask] = useState<ITask[] | null>([])
 
   useEffect(()=>{
     setFilteredTask(tasks ?? [])
@@ -78,15 +79,15 @@ export default function Home() {
     const selectedOption = categoryData.find(category => category.id === id)
 
     if (selectedOption && selectedOption.title === "Todos") {
-      setFilteredTask(tasks ?? [])
+      setFilteredTask(tasks)
     } else {
-      const filter = tasks?.filter(task => task.category === selectedOption?.title)
-      setFilteredTask(filter ?? [])
+      const filter = tasks && tasks.filter(task => task.category === selectedOption?.title)
+      setFilteredTask(filter)
     }
   }
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen">
         <aside className="bg-slate-800 w-72 p-3">
           <h2 className="mb-10 text-white">To do</h2>
           <ul className="flex text-slate-50 flex-col gap-3 mb-10">
@@ -121,9 +122,11 @@ export default function Home() {
                   <li>{task.description}</li>
                   <li className="mb-2">{task.category}</li>
                   <div className="flex items-center gap-3">
-                    <PiTrashSimple onClick={()=> deleteTask(task.id)} size={20}/>
-                    <CiEdit size={20}/>
-                    <IoCheckmarkOutline size={20}/>
+                    <PiTrashSimple  className="cursor-pointer" onClick={()=> deleteTask(Number(task.id))} size={20}/>
+                    <Link href={`editTask/${task.id}`}>
+                      <CiEdit className="cursor-pointer" size={20}/>
+                    </Link>
+                    <IoCheckmarkOutline className="cursor-pointer" size={20}/>
                   </div>
                 </ul>
                 )

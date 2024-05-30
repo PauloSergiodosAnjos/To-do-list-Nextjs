@@ -7,6 +7,7 @@ const supabase = createClient("https://nwzgcygpeaprnylgxgoe.supabase.co", "eyJhb
 
 //Tipo dos dados da task
 interface ITasktype {
+    id: string
     category: string
     description: string,
     title: string,
@@ -20,12 +21,14 @@ interface IPropsTaskContext {
     createTask: (task: ITasktype) => Promise<void>
     deleteTask: (id: number) => Promise<void>,
     getTasks: ()=> Promise<void>
-    editTask: (id: number, task: ITasktype)=> Promise<void>
+    editTask: (id: number, task: ITasktype)=> Promise<void>,
+    findTask: (id: number) => ITasktype | undefined | null
 }
 
 //valor default do contexto
 const DEFAUL_VALUE = {
     state: {
+        id: "",
         category: "",
         description: "",
         title: ""
@@ -35,7 +38,8 @@ const DEFAUL_VALUE = {
     createTask: async ()=> {},
     deleteTask: async ()=> {},
     getTasks: async ()=> {},
-    editTask: async ()=> {}
+    editTask: async ()=> {},
+    findTask: ()=> undefined
 }
 
 //criando nosso contexto, tipando ele com os dados (props) que queremos ter no nosso context
@@ -45,7 +49,6 @@ const TaskContext = createContext<IPropsTaskContext>(DEFAUL_VALUE)
 interface IProps {
     children: ReactNode
 }
-
 
 const TaskContextProvider = ({ children }: IProps)=> {
     //criando os states que irao compor as props necessarias do context criado
@@ -59,7 +62,6 @@ const TaskContextProvider = ({ children }: IProps)=> {
     const getTasks = async ()=>{
         try {
             const { data } = await supabase.from("Tasks").select()
-            console.log(data);
             
             setTasks(data)
         } catch (error) {
@@ -90,6 +92,10 @@ const TaskContextProvider = ({ children }: IProps)=> {
         await getTasks()
     }
 
+    const findTask = (id: number)=> {
+        return tasks?.find(task => Number(task.id) === id) 
+    }
+
     return(
         <TaskContext.Provider value={{
             state,
@@ -98,7 +104,8 @@ const TaskContextProvider = ({ children }: IProps)=> {
             createTask,
             deleteTask,
             getTasks,
-            editTask
+            editTask,
+            findTask
         }}>
             { children }
         </TaskContext.Provider>

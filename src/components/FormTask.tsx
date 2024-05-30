@@ -20,6 +20,7 @@ export default function FormTask() {
 
     const onSubmit = (data: Inputs) => {
         const task = new Task(data)
+        console.log(task);
         createTask(task)
         reset()
     }
