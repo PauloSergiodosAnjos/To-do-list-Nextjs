@@ -122,7 +122,7 @@ export default function Home() {
                   <li>{task.description}</li>
                   <li className="mb-2">{task.category}</li>
                   <div className="flex items-center gap-3">
-                    <PiTrashSimple  className="cursor-pointer" onClick={()=> deleteTask(Number(task.id))} size={20}/>
+                    <PiTrashSimple  className="cursor-pointer" onClick={()=> deleteTask(task.id)} size={20}/>
                     <Link href={`editTask/${task.id}`}>
                       <CiEdit className="cursor-pointer" size={20}/>
                     </Link>

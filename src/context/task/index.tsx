@@ -19,10 +19,10 @@ interface IPropsTaskContext {
     setState: React.Dispatch<React.SetStateAction<ITasktype>>,
     tasks: ITasktype[] | null,
     createTask: (task: ITasktype) => Promise<void>
-    deleteTask: (id: number) => Promise<void>,
+    deleteTask: (id: string) => Promise<void>,
     getTasks: ()=> Promise<void>
-    editTask: (id: number, task: ITasktype)=> Promise<void>,
-    findTask: (id: number) => ITasktype | undefined | null
+    editTask: (id: string, task: ITasktype)=> Promise<void>,
+    findTask: (id: string) => ITasktype  | null | void
 }
 
 //valor default do contexto
@@ -39,7 +39,7 @@ const DEFAUL_VALUE = {
     deleteTask: async ()=> {},
     getTasks: async ()=> {},
     editTask: async ()=> {},
-    findTask: ()=> undefined
+    findTask: ()=> null
 }
 
 //criando nosso contexto, tipando ele com os dados (props) que queremos ter no nosso context
@@ -62,38 +62,41 @@ const TaskContextProvider = ({ children }: IProps)=> {
     const getTasks = async ()=>{
         try {
             const { data } = await supabase.from("Tasks").select()
-            
             setTasks(data)
         } catch (error) {
-            console.log(error);
+            console.log("Erro na func getTask()" + error);
         }
     }
 
-    const createTask = async (user: ITasktype)=>{
+    const createTask = async (task: ITasktype)=>{
         try {
-            await supabase.from("Tasks").insert({category: user.category, description: user.description, title: user.title})
+            await supabase.from("Tasks").insert({id: task.id, category: task.category, description: task.description, title: task.title})
             await getTasks()
         } catch (error) {
-            console.log(error);
+            console.log("Erro na func createTask()" + error);
         }
     }
 
-    const deleteTask = async (id: number) => {
+    const deleteTask = async (id: string) => {
         try {
             await supabase.from("Tasks").delete().eq("id", id)
             await getTasks()
         } catch (error) {
-            console.log(error);
+            console.log("Erro na func deleteTask()" + error);
         }
     }
 
-    const editTask = async (id: number, task: ITasktype) => {
-        await supabase.from("Tasks").update({category: task.category, description: task.description, title: task.title}).eq("id", String(id))
-        await getTasks()
+    const editTask = async (id: string, task: ITasktype) => {
+        try {
+            await supabase.from("Tasks").update({category: task.category, description: task.description, title: task.title}).eq("id", String(id))
+            await getTasks()
+        } catch (error) {
+            console.log("Erro na func editTask()" + error);
+        }
     }
 
-    const findTask = (id: number)=> {
-        return tasks?.find(task => Number(task.id) === id) 
+    const findTask = (id: string)=> {
+        return tasks && tasks.find(task => task.id === id) 
     }
 
     return(

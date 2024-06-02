@@ -5,6 +5,7 @@ import Task from "../modal/Task"
 import Header from "../components/Header"
 import { useContext } from "react"
 import TaskContext from "@/context/task"
+import Link from "next/link"
 
 type Inputs = {
     title: string,
@@ -48,7 +49,9 @@ export default function FormTask() {
                     <label htmlFor="title">Outros</label>
                     {errors.category && <p className="text-red-500">This field is required</p>}
                 </div>
+                <Link href="/">
                     <input className="bg-slate-300 p-2 rounded hover:bg-green-500 cursor-pointer" type="submit" />
+                </Link>
             </form>
         </main>
     )
