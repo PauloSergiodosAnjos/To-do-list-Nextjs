@@ -132,9 +132,9 @@ export default function Home() {
               {filteredTask && filteredTask.map((task, i)=>{
                 return(
                 <ul key={i} className={`${task.isChecked ? "bg-green-400 w-fit p-3 rounded" : "bg-slate-400 w-fit p-3 rounded"}`}>
-                  <li className="text-center text-lg font-bold mb-5">{task.title}</li>
-                  <li>{task.description}</li>
-                  <li className="mb-2">{task.category}</li>
+                  <li className="text-center text-lg font-bold mb-4">{task.title}</li>
+                  <li className="italic mb-2">{task.description}</li>
+                  <li className="mb-2 font-bold">{task.category}</li>
                   <div className="flex items-center gap-3">
                     <PiTrashSimple  className="cursor-pointer" onClick={()=> deleteTask(task.id)} size={20}/>
                     <Link href={`editTask/${task.id}`}>
