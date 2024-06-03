@@ -5,6 +5,7 @@ export default class Task {
         this.id = uuidv4()
         this.category = category
         this.description = description,
-        this.title = title
+        this.title = title,
+        this.isChecked = false
     }
 }

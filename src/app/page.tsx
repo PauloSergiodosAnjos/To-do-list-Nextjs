@@ -12,7 +12,8 @@ interface ITask {
   id: string,
   category: string,
   description: string,
-  title: string
+  title: string,
+  isChecked: boolean
 }
 
 interface ICategory {
@@ -56,7 +57,7 @@ const categoryData: ICategory[] = [
 
 export default function Home() {
 
-  const { tasks, deleteTask } = useContext(TaskContext)
+  const { tasks, deleteTask, findTask, editTask } = useContext(TaskContext)
   const [category, setCategory] = useState<ICategory[]>(categoryData)
   const [filteredTask, setFilteredTask] = useState<ITask[] | null>([])
 
@@ -86,13 +87,26 @@ export default function Home() {
     }
   }
 
+  const checkTask = (id: string)=> {
+    const task: ITask | void | null = findTask(id)
+    if (task) {
+      editTask(id, {
+        id: task.id,
+        category: task.category,
+        description: task.description,
+        title: task.title,
+        isChecked: !task.isChecked
+      })
+    }
+  }
+
   return (
     <div className="flex min-h-screen">
         <aside className="bg-slate-800 w-72 p-3">
           <h2 className="mb-10 text-white">To do</h2>
           <ul className="flex text-slate-50 flex-col gap-3 mb-10">
-            <li>Home</li>
-            <li>Criar</li>
+            <Link className="w-fit" href="/">Home</Link>
+            <Link className="w-fit" href="/createTask">Criar</Link>
           </ul>
           <div className="bg-slate-600 h-px"></div>
           <details className="mt-10">
@@ -117,7 +131,7 @@ export default function Home() {
           <div className="flex flex-wrap pr-2 pb-4 gap-10">
               {filteredTask && filteredTask.map((task, i)=>{
                 return(
-                <ul key={i} className="bg-slate-400 w-fit p-3 rounded">
+                <ul key={i} className={`${task.isChecked ? "bg-green-400 w-fit p-3 rounded" : "bg-slate-400 w-fit p-3 rounded"}`}>
                   <li className="text-center text-lg font-bold mb-5">{task.title}</li>
                   <li>{task.description}</li>
                   <li className="mb-2">{task.category}</li>
@@ -126,7 +140,7 @@ export default function Home() {
                     <Link href={`editTask/${task.id}`}>
                       <CiEdit className="cursor-pointer" size={20}/>
                     </Link>
-                    <IoCheckmarkOutline className="cursor-pointer" size={20}/>
+                    <IoCheckmarkOutline className="cursor-pointer" onClick={()=> checkTask(task.id)} size={20}/>
                   </div>
                 </ul>
                 )

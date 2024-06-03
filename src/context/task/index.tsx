@@ -1,6 +1,6 @@
 "use client"
 
-import React, { ReactNode, createContext, use, useEffect, useState } from "react"
+import React, { ReactNode, createContext, useEffect, useState } from "react"
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient("https://nwzgcygpeaprnylgxgoe.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53emdjeWdwZWFwcm55bGd4Z29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTQyMzI3MjEsImV4cCI6MjAyOTgwODcyMX0.c0x8l1mWxXHe5KOimNd-ls6juLTkz715yTWuLG7kq0w")
@@ -11,6 +11,7 @@ interface ITasktype {
     category: string
     description: string,
     title: string,
+    isChecked: boolean
 }
 
 //Props do contexto, os dados que vao poder ser acessados no context
@@ -31,7 +32,8 @@ const DEFAUL_VALUE = {
         id: "",
         category: "",
         description: "",
-        title: ""
+        title: "",
+        isChecked: false
     },
     setState: () => {},
     tasks: [],
@@ -86,10 +88,12 @@ const TaskContextProvider = ({ children }: IProps)=> {
         }
     }
 
-    const editTask = async (id: string, task: ITasktype) => {
+    const editTask = async (id: string, task: ITasktype | null) => {
         try {
-            await supabase.from("Tasks").update({category: task.category, description: task.description, title: task.title}).eq("id", String(id))
-            await getTasks()
+            if (task) {
+                await supabase.from("Tasks").update({category: task.category, description: task.description, title: task.title, isChecked: task.isChecked}).eq("id", String(id))
+                await getTasks()
+            }
         } catch (error) {
             console.log("Erro na func editTask()" + error);
         }

@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form"
 import { useContext, useEffect } from "react"
 import TaskContext from "@/context/task"
 import Header from "../../../components/Header"
+import { useRouter } from "next/navigation"
 
 interface IProps {
     params: { id: string }
@@ -19,6 +20,7 @@ export default function EditTask({ params }: IProps) {
     const { register, handleSubmit, formState: { errors }, reset } = useForm<Inputs>()
     const { editTask, findTask, getTasks } = useContext(TaskContext)
     const taskToEdit = findTask(params.id)
+    const router = useRouter()
 
     useEffect(() => {
         const fetchTasks = async ()=> {
@@ -33,6 +35,7 @@ export default function EditTask({ params }: IProps) {
             ...data
         })
         reset()
+        router.push("/")
     }
 
     return(

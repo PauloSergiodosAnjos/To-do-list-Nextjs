@@ -5,7 +5,7 @@ import Task from "../modal/Task"
 import Header from "../components/Header"
 import { useContext } from "react"
 import TaskContext from "@/context/task"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 type Inputs = {
     title: string,
@@ -17,6 +17,7 @@ export default function FormTask() {
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm<Inputs>()
     const { createTask } = useContext(TaskContext)
+    const router = useRouter()
 
 
     const onSubmit = (data: Inputs) => {
@@ -24,6 +25,7 @@ export default function FormTask() {
         console.log(task);
         createTask(task)
         reset()
+        router.push("/")
     }
     
     return(
@@ -49,9 +51,7 @@ export default function FormTask() {
                     <label htmlFor="title">Outros</label>
                     {errors.category && <p className="text-red-500">This field is required</p>}
                 </div>
-                <Link href="/">
-                    <input className="bg-slate-300 p-2 rounded hover:bg-green-500 cursor-pointer" type="submit" />
-                </Link>
+                    <input className="bg-slate-300 p-2 rounded hover:bg-green-500 cursor-pointer" type="submit"/>
             </form>
         </main>
     )
