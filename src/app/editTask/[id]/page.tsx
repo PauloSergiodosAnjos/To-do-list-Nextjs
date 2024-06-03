@@ -12,7 +12,8 @@ interface IProps {
 type Inputs = {
     title: string,
     description: string,
-    category: string
+    category: string,
+    isChecked: boolean
 }
 
 export default function EditTask({ params }: IProps) {
